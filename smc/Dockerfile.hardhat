@@ -1,0 +1,30 @@
+FROM node:20.11.1-alpine
+
+WORKDIR /app
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy contracts and config
+COPY . .
+
+# Compile contracts at build time by default. In dev the smc source is bind-mounted
+# over /app (so baked artifacts are shadowed) and the deploy step compiles against
+# the host dir — so dev sets SKIP_HARDHAT_COMPILE=1 to skip this ~3min build step.
+ARG SKIP_HARDHAT_COMPILE=0
+RUN if [ "$SKIP_HARDHAT_COMPILE" = "1" ]; then \
+      echo "Skipping build-time compile (dev: runtime + bind mount handles it)"; \
+    else \
+      rm -rf artifacts cache && npx hardhat compile; \
+    fi
+
+# This image is smc TOOLING (compile + run deploy scripts), not a chain node.
+# The chain is Besu. dev overrides the command to keep it idle; the default below
+# just keeps a standalone container alive rather than starting a Hardhat node.
+CMD ["tail", "-f", "/dev/null"]

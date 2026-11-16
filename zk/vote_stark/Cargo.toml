@@ -1,0 +1,46 @@
+# Standalone crate: declare an empty workspace so cargo doesn't search ancestor
+# directories for a workspace root (the spike lives inside the larger laive repo).
+[workspace]
+
+[package]
+name = "vote_stark"
+version = "0.1.0"
+edition = "2021"
+description = "Phase-0 feasibility spike: a Winterfell zk-STARK port of LAIVE's vote.circom (Semaphore-style anonymous vote) over Goldilocks + RPO256."
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+# The STARK prover/verifier. Pinned exact: the verifier protocol + field/hash choice
+# locks the whole downstream stack (on-chain verifier + ballotbox DB).
+winterfell = { version = "=0.13.1", default-features = false }
+
+# --- WASM-only (in-browser / phone proving) ---
+wasm-bindgen = { version = "0.2", optional = true }
+js-sys = { version = "0.3", optional = true }
+getrandom = { version = "0.2", optional = true }
+
+[dev-dependencies]
+# RPO256 + Merkle reference oracle. Pinned exact: 0.19.8 is the LAST winterfell-based
+# miden-crypto (0.20+ migrated to Plonky3). It shares winter-math 0.13 with winterfell
+# 0.13.1, so `miden_crypto::Felt` IS `winterfell::math::fields::f64::BaseElement`.
+# Used ONLY in tests to prove our in-AIR RPO is byte-identical to canonical RPO256.
+miden-crypto = "=0.19.8"
+
+[features]
+default = ["std", "concurrent"]
+std = ["winterfell/std"]
+concurrent = ["winterfell/concurrent"]
+# WASM proving build: single-threaded (no rayon), std (wasm32 has std).
+wasm = ["std", "dep:wasm-bindgen", "dep:js-sys", "dep:getrandom", "getrandom/js"]
+
+[[example]]
+name = "feasibility"
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = true

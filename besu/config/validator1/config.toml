@@ -1,0 +1,37 @@
+# Besu validator configuration for vote_besu_validator_1
+# Deterministic single-validator network for dev/testing
+
+data-path="/data"
+genesis-file="/config/genesis.json"
+node-private-key-file="/config/validator1/key"
+min-gas-price=0
+logging="INFO"
+
+# RPC (HTTP & WS)
+# HTTP is the publicly-tunneled listener (<your-public-rpc-host>). It must stay
+# read/submit-only: ETH/NET/WEB3 cover MetaMask + dApp reads and eth_sendRawTransaction.
+# ADMIN/TXPOOL/QBFT are deliberately NOT exposed here — they are reachable on the
+# localhost-only WS port (8546) and via `docker exec` for operator/validator tasks.
+rpc-http-enabled=true
+rpc-http-host="0.0.0.0"
+rpc-http-port=8545
+# CORS open to all origins so MetaMask / any dApp can call the PUBLIC read-only RPC
+# (api is locked to ETH,NET,WEB3 — CORS is not a security boundary for a public endpoint).
+rpc-http-cors-origins=["all"]
+rpc-http-api=["ETH","NET","WEB3"]
+
+rpc-ws-enabled=true
+rpc-ws-host="0.0.0.0"
+rpc-ws-port=8546
+rpc-ws-api=["ETH","NET","WEB3","QBFT","IBFT","TXPOOL"]
+
+# Networking
+p2p-enabled=true
+p2p-port=30303
+p2p-host="0.0.0.0"
+nat-method="NONE"
+# Allow all Docker internal hosts (backend, smc deployer, etc.)
+host-allowlist=["*"]
+
+# Storage: diff-based format, auto-prunes old state (~1-2 GB/yr vs ~7-10 GB/yr with FOREST)
+data-storage-format="BONSAI"

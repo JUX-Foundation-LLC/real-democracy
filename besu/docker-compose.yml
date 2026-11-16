@@ -1,0 +1,22 @@
+services:
+  besu:
+    image: hyperledger/besu:latest
+    container_name: vote_besu_validator_1
+    command:
+      - --config-file=/config/validator1/config.toml
+    ports:
+      - "28545:8545"   # HTTP RPC (host port 28545, avoids conflict when prod Hardhat also runs)
+      - "28546:8546"   # WS RPC
+      - "30303:30303"  # P2P
+    volumes:
+      - ./config:/config:ro
+      - ./data:/data
+    networks:
+      vote-network:
+        aliases:
+          - besu
+
+networks:
+  vote-network:
+    external: true
+    name: vote_vote_network

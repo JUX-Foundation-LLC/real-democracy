@@ -1,0 +1,12 @@
+# Besu data directories
+data/
+
+# Node keys (private keys - never commit!)
+config/*/key
+config/*/key.pub
+
+# Account keystores (private keys - never commit!)
+config/accounts/*.json
+
+# Logs
+*.log
