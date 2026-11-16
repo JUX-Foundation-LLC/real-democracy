@@ -19,6 +19,14 @@
       "epochlength": 43200,
       "requesttimeoutseconds": 8,
       "createemptyblocks": false
+    },
+    "transitions": {
+      "qbft": [
+        {
+          "block": 1792115400,
+          "emptyblockperiodseconds": 60
+        }
+      ]
     }
   },
   "nonce": "0x0",
@@ -29,7 +37,7 @@
   "coinbase": "0x0000000000000000000000000000000000000000",
   "alloc": {
     "91215ac1c9b9b4e84fc7412a4917b86f916ac1c1": {
-      "comment": "Operator/deployer + backend signer — FRESH rotated key (replaces the old well-known-public-key account 0xFE3B55…). Private key is in migration-artifacts/operator-key-1787.SECRET.txt (gitignored); at the cut, load it into Vault/.env.production as BLOCKCHAIN_SIGNER_PRIVATE_KEY and DELETE the file. This address gets all admin roles at deploy. Contract addresses differ from the old chain (new deployer) — expected.",
+      "comment": "Operator/deployer + backend signer \u2014 FRESH rotated key (replaces the old well-known-public-key account 0xFE3B55\u2026). Private key is in migration-artifacts/operator-key-1787.SECRET.txt (gitignored); at the cut, load it into Vault/.env.production as BLOCKCHAIN_SIGNER_PRIVATE_KEY and DELETE the file. This address gets all admin roles at deploy. Contract addresses differ from the old chain (new deployer) \u2014 expected.",
       "balance": "0xad78ebc5ac6200000"
     }
   },
